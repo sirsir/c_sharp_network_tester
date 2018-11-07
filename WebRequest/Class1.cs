@@ -8,8 +8,23 @@ using System.Threading.Tasks;
 
 namespace WebRequestLibrary
 {
+    //// https://www.codeproject.com/Articles/24355/Authenticating-with-a-proxy-in-WPF
+    class ProxyCredentials : ICredentialPolicy
+    {
+        bool ICredentialPolicy.ShouldSendCredential(Uri challengeUri, WebRequest request,
+                 NetworkCredential credential, IAuthenticationModule authenticationModule)
+        {
+            return true;
+        }
+    }
+
     public class Class1
     {
+        static Class1()
+        {
+            AuthenticationManager.CredentialPolicy = new ProxyCredentials();
+        }
+        
 
         public static Dictionary<string, string> SendRequest(string httpMethod, string url, Dictionary<string, string> data)
         {
@@ -44,6 +59,11 @@ namespace WebRequestLibrary
                 
 
                 var request = (HttpWebRequest)WebRequest.Create(url);
+
+                IWebProxy proxy = WebRequest.GetSystemWebProxy();
+                proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                request.Proxy = proxy;
+                request.PreAuthenticate = true;
 
                 var postData = "thing1=hello";
                 postData += "&thing2=world";
@@ -85,10 +105,14 @@ namespace WebRequestLibrary
             Dictionary<string, string> response = new Dictionary<string, string>();
 
             try
-            {
-                
+            {                
 
                 var request = (HttpWebRequest)WebRequest.Create(url);
+
+                IWebProxy proxy = WebRequest.GetSystemWebProxy();
+                proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                request.Proxy = proxy;
+                request.PreAuthenticate = true;
 
                 var response0 = (HttpWebResponse)request.GetResponse();
 
@@ -104,8 +128,6 @@ namespace WebRequestLibrary
 
                 response.Add("e.Message", e.Message);
                 response.Add("e", e.ToString());
-
-
 
                 return response;
 

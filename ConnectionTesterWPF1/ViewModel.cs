@@ -33,6 +33,8 @@ namespace ConnectionTesterWPF1
             connectionList.Add(new Connection("RestSharp", "1", "POST"));
             connectionList.Add(new Connection("RestSharp2", "2"));
             connectionList.Add(new Connection("RestSharp2", "1", "POST"));
+            connectionList.Add(new Connection("IE", "1"));
+            connectionList.Add(new Connection("IE", "1", "POST"));
 
             // ... Assign.
             //var grid = sender as DataGrid;
@@ -106,6 +108,14 @@ namespace ConnectionTesterWPF1
                     {
 
                         var response = RestSharpLibrary2.Class1.SendRequest(method, url2submit, data);
+
+                        connectionList.ElementAt(id).Response = response["result"];
+                        break;
+                    }
+                case 8:
+                case 9:
+                    {
+                        var response = WindowsFormsApplication1.Api.SendRequest(method, url2submit, data);
 
                         connectionList.ElementAt(id).Response = response["result"];
                         break;
